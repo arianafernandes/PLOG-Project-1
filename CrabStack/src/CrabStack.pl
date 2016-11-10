@@ -17,7 +17,8 @@
 %l2 - player1 piece large
 
 
-/* Empty Board */
+/* Empty Board 
+
 empty_board([
            [a, a, a, a, b1, a, a, a, a, a, a, a, a, a, a, a, b2], %17
            [a, a, a, b1, a, a, e, e, e, a, a, b2], %12
@@ -29,7 +30,7 @@ empty_board([
           ]).
 
 
-/* Initial Random Board */
+Initial Random Board
 initial_board([
            [a, a, a, a, b1, a, a, a, a, a, a, a, a, a, a, a, b2],
            [a, a, a,  b1, a, a, s1, s1, s1, a, a, b2],
@@ -50,7 +51,7 @@ initial_list_board([
            [a, a, a, a, a , a, a, a, a, a, a, a, a, a, a]
           ]).
 
-/* Game Board */
+Game Board 
 game_board([
            [a, a, a, a, b1, a, a, a, a, a, a, a, a, a, a, a, b2],
            [a, a, a, b1, a, a, s2, s2, s1, a, a, b2],
@@ -61,7 +62,7 @@ game_board([
            [a, a, a, a, b2, a, a, a, a, a, a, a, a, a, a, a, b1]
           ]).
 
-/* Final Game Board */
+Final Game Board
 final_game_board([
            [a, a, a, a, b1, a, a, a, a, a, a, a, a,  a, a, a, b2],
            [a, a, a, b1, a , a, o, o, o, a, a, b2],
@@ -71,27 +72,43 @@ final_game_board([
            [a, a, a, b2, a, a, o, o, o, a, a, b1],
            [a, a, a, a, b2, a, a, a, a, a, a, a, a, a, a, a, b1]
           ]).
+*/
+board_new([
+         [[empty,empty], [empty, empty]],
+         [[empty,empty], [empty, empty]]]).
+         
+         
 
-
-display:-initial_list_board(T), display_top, display_board(T).
+display:-board_new(T), display_top, display_board(T).
 
 display_board([]):-display_bottom.
 display_row([]).
+display_column([]).
 
 
 display_top:- write('     ___________'), nl.
 display_bottom:- write('     -----------').
 
 display_board([L1|Le]):-
+         write('Ola'),
         display_row(L1),
-        nl,
+         nl,
         display_board(Le).
 
+
 display_row([E|Ee]):-
-        display_element([E|Ee]),
+         write('Ola2'),
+        display_column([E|Ee]),
         display_row(Ee).
 
+display_column([E|Ee]):-
+        write('Ola3'),
+        display_element([E|Ee]),
+        nl,
+        display_column(Ee).
+
 display_element([E|Ee]) :-
+        write('Ola4'),
         translate(E,V),
         write(V),
         nl,
@@ -113,6 +130,8 @@ translate(l1, '1L ').
 translate(s2, '2s ').
 translate(m2, '2m ').
 translate(l2, '2L ').
+/*translate(empty, 'X')*/
+
 
 
 
