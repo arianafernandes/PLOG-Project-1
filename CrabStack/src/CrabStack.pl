@@ -40,6 +40,15 @@ initial_board([
            [a, a, a, a, b2, a , a, a, a, a, a, a, a, a, a, a, b1]
           ]).
 
+initial_list_board([
+           [a, a, a, a, a, a, a, a, a, a, a, a, a, a, a],
+           [a, a, a, a, a, [s1,a], [s1|a], [s1|a], a, a],
+           [a, a, a, a, [m1|a], [m1|a], [m1|a], [l1|a], a],
+           [a, a, a, [l1|a], [l1|a], c, [s2|a], [s2|a], a],
+           [a, a, a , a, [s2|a], [m2|a], [m2|a], [m2|a], a],
+           [a, a, a, a, a, [l2|a], [l2|a], [l2|a], a, a],
+           [a, a, a, a, a , a, a, a, a, a, a, a, a, a, a]
+          ]).
 
 /* Game Board */
 game_board([
@@ -64,7 +73,7 @@ final_game_board([
           ]).
 
 
-display:-final_game_board(T), display_top, display_board(T).
+display:-initial_list_board(T), display_top, display_board(T).
 
 display_board([]):-display_bottom.
 display_row([]).
@@ -79,9 +88,14 @@ display_board([L1|Le]):-
         display_board(Le).
 
 display_row([E|Ee]):-
+        display_element([E|Ee]),
+        display_row(Ee).
+
+display_element([E|Ee]) :-
         translate(E,V),
         write(V),
-        display_row(Ee).
+        nl,
+        display_element(Ee).
 
 
 translate(a,  ' ').
