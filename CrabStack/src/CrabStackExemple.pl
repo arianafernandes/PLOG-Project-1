@@ -16,7 +16,6 @@
 %m2 - player1 piece medium
 %l2 - player1 piece large
 
-
  /*Empty Board*/ 
 
 empty_board([
