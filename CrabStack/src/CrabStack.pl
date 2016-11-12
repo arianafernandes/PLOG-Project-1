@@ -41,10 +41,6 @@ exit:-
         write('Game is goind to exit...\n').
 
 
-generateRandomNumber:-
-        random(0,4,R),
-        write(R).
-
 generateRandomTab:-
         generateTopTab,
         generateDownTab.

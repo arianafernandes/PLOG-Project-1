@@ -117,6 +117,10 @@ translate(b3, '|').
 translate(c,  '  ').
 translate(o,  'O  ').
 
+translate(empty,  ' ').
+translate(zero,  'x').
+translate(center, 'o').
+
 translate(s1, '1s ').
 translate(m1, '1m ').
 translate(l1, '1L ').
@@ -126,7 +130,15 @@ translate(m2, '2m ').
 translate(l2, '2L ').
 translate(empty, 'X').
 
-
+/*teste1(N,X,Z):-
+        N =:= 0,!,
+        translate(X,C),
+        Z =:= 0,!,
+        write(C).
+teste1(N,X,Z):-
+        N =:= 0,
+        translate(X,C),
+        Z =\= 1.*/
 
 
 
