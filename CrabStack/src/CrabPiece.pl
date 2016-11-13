@@ -21,5 +21,8 @@ getNumMoves(crab(_,_,numMoves),numMoves).
 %setColor(crab(+color,+size,+numMoves),+Color,crab(-color,-size,-numMoves)).
 setColor(crab(_,size,numMoves),NewColor,crab(NewColor,size,numMoves)).
 
-%setNumPieces(player(+number,+numPieces),+numPieces,player(-number,-numPieces)).
-setNumPieces(player(number,_),NewNumPieces,player(number,NewNumPieces)).
+%setSize(crab(+color,+size,numMoves),+size,crab(-color,size,-numMoves)).
+setSize(crab(color,_,numMoves),NewSize,crab(number,NewSize,numMoves)).
+
+%setNumMoves(crab(+color,+size,numMoves),+numMoves,crab(-color,size,-numMoves)).
+setNumMoves(crab(color,size,_),NewNumMoves,crab(number,size,NewNumMoves)).
