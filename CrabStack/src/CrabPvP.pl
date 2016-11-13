@@ -13,9 +13,9 @@ choosePieceToMove(Player, Board, NewBoard):-
     write('\n    Piece Row '), read(Row), Row > 0, Row =< 5,
     write('\n    Piece Collumn  '), read(Col), Col > 0, Col =< 5,
     (checkIsValidMove(Piece,Row, Col,RowDest,ColDest, Player, Board) ->
-                    MovePiece(Piece,Row,Col,RowDest,ColDest,Player,Board,NewBoard);
+                    movePiece(Piece,Row,Col,RowDest,ColDest,Player,Board,NewBoard);
                     displayMessage(['\nYou have to choose an available Play!']),
                     choosePieceToMove(Player, Board, NewBoard))                                   
                 ;
-        displayMessage(['\n Cant move that piece! Please choose one of your pieces! ']),
-        choosePieceToMove(Player, Board, NewBoard)).
+        displayMessage(['\n Canst move that piece! Please choose one of your pieces! ']),
+        choosePieceToMove(Player, Board, NewBoard).
