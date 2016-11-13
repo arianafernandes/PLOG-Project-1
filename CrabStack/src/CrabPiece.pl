@@ -8,21 +8,21 @@ isCrab(crab(_,_,_)).
 %Getters
 
 %getColor(crab(+color,+size,+numMoves),-color).
-getColor(crab(color,_,_),color).
+getColor(crab(Color,_,_),Color).
 
 %getSize(crab(+color,+size,+numMoves),-size).
-getSize(crab(_,size,_),size).
+getSize(crab(_,Size,_),Size).
 
 %getNumMoves(crab(+color,+size,+numMoves),-numMoves).
-getNumMoves(crab(_,_,numMoves),numMoves).
+getNumMoves(crab(_,_,NumMoves),NumMoves).
 
 %Setters
 
 %setColor(crab(+color,+size,+numMoves),+Color,crab(-color,-size,-numMoves)).
-setColor(crab(_,size,numMoves),NewColor,crab(NewColor,size,numMoves)).
+setColor(crab(_,Size,NumMoves),NewColor,crab(NewColor,Size,NumMoves)).
 
 %setSize(crab(+color,+size,numMoves),+size,crab(-color,size,-numMoves)).
-setSize(crab(color,_,numMoves),NewSize,crab(number,NewSize,numMoves)).
+setSize(crab(Color,_,NumMoves),NewSize,crab(Color,NewSize,NumMoves)).
 
 %setNumMoves(crab(+color,+size,numMoves),+numMoves,crab(-color,size,-numMoves)).
-setNumMoves(crab(color,size,_),NewNumMoves,crab(number,size,NewNumMoves)).
+setNumMoves(crab(Color,Size,_),NewNumMoves,crab(Color,Size,NewNumMoves)).
