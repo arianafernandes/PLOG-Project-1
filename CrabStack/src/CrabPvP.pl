@@ -2,5 +2,4 @@
 :-include('GameLogic.pl').
 
 crabPvP:-
-        %retractall(gameState),
         gameInit.

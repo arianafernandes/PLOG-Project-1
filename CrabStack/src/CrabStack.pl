@@ -40,17 +40,16 @@ chooseGame(T):- %CvC Mode
 exit:-
         write('Game is goind to exit...\n').
 
-
+/*
 generateRandomTab:-
         generateTopTab,
         generateDownTab.
         %generateRandomRow(3).
-/*
+
 generateRandomRow:-
         generateRandomPiece.
 
 generateRandomPiece.
-*/
 
 %Generates the top Tab
 generateTopTab:-
@@ -88,10 +87,4 @@ printChar(CharsDone,TotalChars,C):-
         SpacesDoneN is CharsDone+1,
         printChar(SpacesDoneN, TotalChars,C).
 printChar(CharsDone,TotalChars,C):-
-        CharsDone >= TotalChars.
-        
-        
-        
-        
-         
-        
+        CharsDone >= TotalChars.*/     
