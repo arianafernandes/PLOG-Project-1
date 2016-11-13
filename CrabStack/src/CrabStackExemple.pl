@@ -118,7 +118,7 @@ translate(c,  '  ').
 translate(o,  'O  ').
 
 translate(empty,  ' ').
-translate(zero,  'x').
+translate(x,  'x').
 translate(center, 'o').
 
 translate(s1, '1s ').

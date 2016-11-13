@@ -8,6 +8,23 @@ board([
          [[x],[empty],[empty],[empty],[x]]
       ]).
 
+%TRANSLATES
+translate(b1, '/').
+translate(b2, '\\').
+translate(b3, '|').
+translate(under, '_').
+translate(empty,  ' ').
+translate(x,  'xx').
+translate(center, 'O').
+
+translate(s1, '1s').
+translate(m1, '1m').
+translate(l1, '1L').
+translate(s2, '2s').
+translate(m2, '2m').
+translate(l2, '2l').
+
+
 % -- Changing Board Game -- %
 
 % - Getting Cell - %
@@ -54,3 +71,95 @@ emptyCellCol(Col, [H | T1], [H | T2]):-
         Col > 1, Col < 6,
         NewCol is Col - 1,
         emptyCellCol(NewCol, T1, T2).
+
+
+% -- Display Board -- %
+display_tab(Board):-
+        display_top,
+        display_board(Board,0,0),
+        display_down.
+
+display_top:-
+        printUnderLine,nl,
+        printSecondLineTab(b1,b2,empty),nl.
+
+display_down:-
+         printSecondLineTab(b2,b1,under),nl.
+        
+
+display_board([],N,N2).
+display_board([L1|Le],N,N2):-
+        SpacesP is 3-N,
+        ((N2 == 0) -> (printChar(0,SpacesP,empty),
+                      printChar(0,1,b1),
+                      display_row(L1,1,1,0),
+                      printChar(0,1,b2),nl,
+                      NextN is N +1);true),
+        ((N2 == 1) -> (printChar(0,SpacesP,empty),
+                      printChar(0,1,b1),
+                      display_row(L1,2,2,0),
+                      printChar(0,1,b2),nl,
+                      NextN is N +1);true),
+        ((N2 == 2) -> (printChar(0,SpacesP,empty),
+                      printChar(0,1,b3),
+                      display_row(L1,3,2,0),
+                      printChar(0,1,b3),nl,
+                      NextN is N -1);true),
+        ((N2 == 3) -> (printChar(0,SpacesP,empty),
+                      printChar(0,1,b2),
+                      display_row(L1,4,2,0),
+                      printChar(0,1,b1),nl,
+                      NextN is N -1);true),
+        ((N2 == 4) -> (printChar(0,SpacesP,empty),
+                      printChar(0,1,b2),
+                      display_row(L1,5,1,0),
+                      printChar(0,1,b1),nl,
+                      NextN is N -1);true),
+        Next2 is N2+1,
+        display_board(Le,NextN,Next2).
+
+display_row([],N,NumberSpaces,Index).
+display_row([R|Re],N,NumberSpaces,Index):-
+        %write('Printing Column\n'),
+        display_column(R),
+        Ip is NumberSpaces - 1,
+        ((Index \= 4)->(
+        ((N ==1)->(printChar(0,NumberSpaces,empty));true),
+        ((N == 2)->(((Index <2)->(printChar(0,Ip,empty));(printChar(0,NumberSpaces,empty))));true),
+        ((N == 3)->(printChar(0,NumberSpaces,empty));true),
+        ((N == 4)->(((Index <2)->(printChar(0,Ip,empty));(printChar(0,NumberSpaces,empty))));true),
+        ((N ==5)->(printChar(0,NumberSpaces,empty));true));true),
+        NewIndex is Index +1,
+        display_row(Re,N,NumberSpaces,NewIndex).
+
+display_column([]).
+display_column([C|Ce]):-
+        %write('Printing Element\n'),
+        display_element(C),
+        display_column(Ce).
+
+display_element(C) :-
+        translate(C,V),
+        write(V).
+
+%Prints a TotalChars number of C char
+printChar(CharsDone,TotalChars,C):-
+        CharsDone < TotalChars,
+        translate(C,S),
+        write(S),
+        SpacesDoneN is CharsDone+1,
+        printChar(SpacesDoneN, TotalChars,C).
+printChar(CharsDone,TotalChars,C):-
+        CharsDone >= TotalChars.
+
+%Printes the under line      
+printUnderLine:-
+        printChar(0,5,empty),
+        printChar(0,12,under).
+
+%Generates Second line Tab
+printSecondLineTab(B1,B2,C1):-
+        printChar(0,4,empty),
+        printChar(0,1,B1),
+        printChar(0,12,C1),
+        printChar(0,1,B2).

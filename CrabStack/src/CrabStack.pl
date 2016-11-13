@@ -6,19 +6,10 @@
 %LIBRARIES
 :- use_module(library(random)). %random
 
-%TRANSLATES
-translate(space,  ' ').
-translate(under,  '_').
-translate(b1, '/').
-translate(b2, '\\').
-translate(empty, ' ').
-translate(x, 'X').
-translate(center, 'O').
-
 
 %GameStart function
 crabStack:-  
-        write('Welcome to CrabStack !!!\n By: António Melo & Ariana Fernandes\n'),
+        write('Welcome to CrabStack !!!\nBy: António Melo & Ariana Fernandes\n'),
         write('Types of games: \n Player vs Player(0)\n Player vs Computer(1)\n Computer vs Computer(2)\n'),
         read(TypeofGame), %Read Type of game
         chooseGame(TypeofGame),
@@ -26,19 +17,19 @@ crabStack:-
 
 chooseGame(T):- %Pvp Mode
         T =:= 0, 
-        write('PvP game starting...'),
+        write('PvP game starting...\n'),
         crabPvP.
 chooseGame(T):- %PvC Mode
         T =:= 1, 
-        write('PvC game starting...'),
+        write('PvC game starting...\n'),
         crabPvC.
 chooseGame(T):- %CvC Mode
         T =:= 2,
-        write('CvC game starting...'),
+        write('CvC game starting...\n'),
         crabCvC.
 %Exit
 exit:-
-        write('Game is goind to exit...\n').
+        write('Game is going to exit...\n').
 
 /*
 generateRandomTab:-
