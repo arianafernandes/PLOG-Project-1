@@ -79,7 +79,7 @@ board_new([
          
 
 display:-board_new(T), display_top, display_board(T).
-display_board([]):-display_bottom.
+display_board([]).
 display_row([]).
 display_column([]).
 
