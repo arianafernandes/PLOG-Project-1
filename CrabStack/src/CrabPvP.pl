@@ -3,6 +3,7 @@
 :- use_module(library(system)).
 
 :- now(Timestamp),setrand(Timestamp).
+
 crabPvP:-
         gameInit.
 

@@ -8,11 +8,16 @@
 :-dynamic lockedPieces/2.
 lockedPieces(1,0).
 lockedPieces(2,0).
-turnToPlay(1).
+
 gameState(board,lockedPieces,turnToPlay).
 
 %Game Initializer 
-gameInit:-board(T),
+gameInit:-
+        retract(lockedPieces(1, _)),
+        assert(lockedPieces(1, 0)),
+        retract(lockedPieces(2, _)),
+        assert(lockedPieces(2, 0)),
+        board(T),
         write('Placing Player1 Pieces\n'),   
         positionPlayerPieces(1,T,NewBoard),
         write('Placing Player2 Pieces\n'), 
@@ -28,12 +33,18 @@ game_loop(1, Board):-  % Play 1 turn
         write('Player1 turn !\n'),
         choosePieceToMove(1,Board,NewBoard),
         display_tab(NewBoard),
-        game_loop(2,NewBoard).
+        lockedPieces(2, CheckWin),
+        write(CheckWin),
+        write('to stack from Player 2'),
+        ((CheckWin == 9)->write('Player1 wins');game_loop(2,NewBoard)).
 game_loop(2, Board):-  % Play 2 turn
         write('Player2 turn !\n'),
         choosePieceToMove(2,Board,NewBoard),
         display_tab(NewBoard),
-        game_loop(1,NewBoard).
+        lockedPieces(1, CheckWin),
+        write(CheckWin),
+        write('to stack from Player 2'),
+        ((CheckWin == 9)->write('Player1 wins');game_loop(1,NewBoard)).
 
 %Place Player Pieces int the board
 positionPlayerPieces(N,T,NewBoard):-
@@ -102,76 +113,82 @@ generateRandomNumber(X,Y):-
 
 equalPosition(X,Y,Z,X1,Y1,Z1):-
         ((X == X1)->((Y == Y1)->((Z == Z1)->true))).        
-        
+
+%Locks Piece
+lockPiece(Player):-
+        lockedPieces(Player, CurrentPieces),
+        NewPieces is CurrentPieces + 1,
+        retract(lockedPieces(Player, _)),
+        assert(lockedPieces(Player, NewPieces)).      
 %Checks if the player can move certain Piece from (Row, Col) to (RowDest,ColDest) in the Board
 checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
-        getCell(Row,Col,Board,[C]),
+        getCell(Row,Col,Board,C),
         write(C),nl,
         write([C]),nl,
-        getCell(RowDest,ColDest,Board,[D]),
+        getCell(RowDest,ColDest,Board,D),
         write(D),nl,
         write([D]),nl,
          ((last([C],x))->fail;true),
          ((last([C],s1))->( ((areAdjacent(Row,Col,RowDest,ColDest,3))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s2))->true;true),
+                          ((last([D],s2))->lockPiece(2);true),
                           ((last([D],m2))->fail;true),
                           ((last([D],l2))->fail;true),
-                          ((last([D],s1))->true;true),
+                          ((last([D],s1))->lockPiece(1);true),
                           ((last([D],m1))->fail;true),
                           ((last([D],l1))->fail;true));true),
          ((last([C],m1))->( ((areAdjacent(Row,Col,RowDest,ColDest,2))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s2))->true;true),
-                          ((last([D],m2))->true;true),
+                          ((last([D],s2))->lockPiece(2);true),
+                          ((last([D],m2))->lockPiece(2);true),
                           ((last([D],l2))->fail;true),
-                          ((last([D],s1))->true;true),
-                          ((last([D],m1))->true;true),
+                          ((last([D],s1))->lockPiece(1);true),
+                          ((last([D],m1))->lockPiece(1);true),
                           ((last([D],l1))->fail;true));true),
          ((last([C],l1))->( ((areAdjacent(Row,Col,RowDest,ColDest,1))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s2))->true;true),
-                          ((last([D],m2))->true;true),
-                          ((last([D],l2))->true;true),
-                          ((last([D],s1))->true;true),
-                          ((last([D],m1))->true;true),
-                          ((last([D],l1))->true;true));true),
+                          ((last([D],s2))->lockPiece(2);true),
+                          ((last([D],m2))->lockPiece(2);true),
+                          ((last([D],l2))->lockPiece(2);true),
+                          ((last([D],s1))->lockPiece(1);true),
+                          ((last([D],m1))->lockPiece(1);true),
+                          ((last([D],l1))->lockPiece(1);true));true),
          ((last([C],s2))->fail;true),
          ((last([C],m2))->fail;true),
          ((last([C],l2))->fail;true).
 
 checkIsValidMove(Row, Col,RowDest,ColDest, 2, Board):-
-        getCell(Row,Col,Board,[C]),
+        getCell(Row,Col,Board,C),
         write(C),nl,
         write([C]),nl,
-        getCell(RowDest,ColDest,Board,[D]),
+        getCell(RowDest,ColDest,Board,D),
         write(D),nl,
         write([D]),nl,
          ((last([C],x))->fail;true),
          ((last([C],s2))->( ((areAdjacent(Row,Col,RowDest,ColDest,3))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s1))->true;true),
+                          ((last([D],s1))->lockPiece(1);true),
                           ((last([D],m1))->fail;true),
                           ((last([D],l1))->fail;true),
-                          ((last([D],s2))->true;true),
+                          ((last([D],s2))->lockPiece(2);true),
                           ((last([D],m2))->fail;true),
                           ((last([D],l2))->fail;true));true),
          ((last([C],m2))->( ((areAdjacent(Row,Col,RowDest,ColDest,2))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s1))->true;true),
-                          ((last([D],m1))->true;true),
+                          ((last([D],s1))->lockPiece(1);true),
+                          ((last([D],m1))->lockPiece(1);true),
                           ((last([D],l1))->fail;true),
-                          ((last([D],s2))->true;true),
-                          ((last([D],m2))->true;true),
+                          ((last([D],s2))->lockPiece(2);true),
+                          ((last([D],m2))->lockPiece(2);true),
                           ((last([D],l2))->fail;true));true),
          ((last([C],l2))->( ((areAdjacent(Row,Col,RowDest,ColDest,1))->true;fail),
                           ((last([D],x))->fail;true),
-                          ((last([D],s1))->true;true),
-                          ((last([D],m1))->true;true),
-                          ((last([D],l1))->true;true),
-                          ((last([D],s2))->true;true),
-                          ((last([D],m2))->true;true),
-                          ((last([D],l2))->true;true));true),
+                          ((last([D],s1))->lockPiece(1);true),
+                          ((last([D],m1))->lockPiece(1);true),
+                          ((last([D],l1))->lockPiece(1);true),
+                          ((last([D],s2))->lockPiece(2);true),
+                          ((last([D],m2))->lockPiece(2);true),
+                          ((last([D],l2))->lockPiece(2);true));true),
          ((last([C],s1))->fail;true),
          ((last([C],m1))->fail;true),
          ((last([C],l1))->fail;true).
