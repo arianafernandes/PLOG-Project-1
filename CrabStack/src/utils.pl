@@ -97,9 +97,9 @@ areAdjacent(X,Y,X1,Y1,Diff):-
 
 % -- Display Board -- %
 display_tab(Board):-
-        display_top,
-        display_board(Board,0,0),
-        display_down.
+        %display_top,
+        display_board(Board,0,0).
+        %display_down.
 
 display_top:-
         printUnderLine,nl,
@@ -112,39 +112,44 @@ display_down:-
 display_board([],N,N2).
 display_board([L1|Le],N,N2):-
         SpacesP is 3-N,
-        ((N2 == 0) -> (printChar(0,SpacesP,empty),
-                      printChar(0,1,b1),
+        ((N2 == 0) -> (%printChar(0,SpacesP,empty),
+                      %printChar(0,1,b1),
                       display_row(L1,1,1,0),
-                      printChar(0,1,b2),nl,
+                      %printChar(0,1,b2),
+                      nl,
                       NextN is N +1);true),
-        ((N2 == 1) -> (printChar(0,SpacesP,empty),
-                      printChar(0,1,b1),
+        ((N2 == 1) -> (%printChar(0,SpacesP,empty),
+                      %printChar(0,1,b1),
                       display_row(L1,2,2,0),
-                      printChar(0,1,b2),nl,
+                      %printChar(0,1,b2),
+                      nl,
                       NextN is N +1);true),
-        ((N2 == 2) -> (printChar(0,SpacesP,empty),
-                      printChar(0,1,b3),
+        ((N2 == 2) -> (%printChar(0,SpacesP,empty),
+                      %printChar(0,1,b3),
                       display_row(L1,3,2,0),
-                      printChar(0,1,b3),nl,
+                      %printChar(0,1,b3),
+                      nl,
                       NextN is N -1);true),
-        ((N2 == 3) -> (printChar(0,SpacesP,empty),
-                      printChar(0,1,b2),
+        ((N2 == 3) -> (%printChar(0,SpacesP,empty),
+                      %printChar(0,1,b2),
                       display_row(L1,4,2,0),
-                      printChar(0,1,b1),nl,
+                      %printChar(0,1,b1),
+                      nl,
                       NextN is N -1);true),
-        ((N2 == 4) -> (printChar(0,SpacesP,empty),
-                      printChar(0,1,b2),
+        ((N2 == 4) -> (%printChar(0,SpacesP,empty),
+                      %printChar(0,1,b2),
                       display_row(L1,5,1,0),
-                      printChar(0,1,b1),nl,
+                      %printChar(0,1,b1),
+                      nl,
                       NextN is N -1);true),
         Next2 is N2+1,
         display_board(Le,NextN,Next2).
 
 display_row([],N,NumberSpaces,Index).
 display_row([R|Re],N,NumberSpaces,Index):-
-        %write('('),
+        write('('),
         display_column(R),
-        %write(')'),
+        write(')'),
         Ip is NumberSpaces - 1,
         ((Index \= 4)->(
         ((N ==1)->(printChar(0,NumberSpaces,empty));true),
