@@ -142,9 +142,9 @@ display_board([L1|Le],N,N2):-
 
 display_row([],N,NumberSpaces,Index).
 display_row([R|Re],N,NumberSpaces,Index):-
-        write('('),
+        %write('('),
         display_column(R),
-        write(')'),
+        %write(')'),
         Ip is NumberSpaces - 1,
         ((Index \= 4)->(
         ((N ==1)->(printChar(0,NumberSpaces,empty));true),

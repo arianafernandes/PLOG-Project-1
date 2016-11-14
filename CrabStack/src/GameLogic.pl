@@ -35,7 +35,7 @@ game_loop(1, Board):-  % Play 1 turn
         display_tab(NewBoard),
         lockedPieces(2, CheckWin),
         write(CheckWin),
-        write('to stack from Player 2'),
+        write('pieces to stack from Player 2\n'),
         ((CheckWin == 9)->write('Player1 wins');game_loop(2,NewBoard)).
 game_loop(2, Board):-  % Play 2 turn
         write('Player2 turn !\n'),
@@ -43,7 +43,6 @@ game_loop(2, Board):-  % Play 2 turn
         display_tab(NewBoard),
         lockedPieces(1, CheckWin),
         write(CheckWin),
-        write('to stack from Player 2'),
         ((CheckWin == 9)->write('Player1 wins');game_loop(1,NewBoard)).
 
 %Place Player Pieces int the board
@@ -123,11 +122,11 @@ lockPiece(Player):-
 %Checks if the player can move certain Piece from (Row, Col) to (RowDest,ColDest) in the Board
 checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
         getCell(Row,Col,Board,C),
-        write(C),nl,
-        write([C]),nl,
+        %write(C),nl,
+        %write([C]),nl,
         getCell(RowDest,ColDest,Board,D),
-        write(D),nl,
-        write([D]),nl,
+        %write(D),nl,
+        %write([D]),nl,
          ((last([C],x))->fail;true),
          ((last([C],s1))->( ((areAdjacent(Row,Col,RowDest,ColDest,3))->true;fail),
                           ((last([D],x))->fail;true),
