@@ -8,7 +8,8 @@
 
 
 %GameStart function
-crabStack:-  
+crabStack:-
+        clearScreen(40),  
         write('Welcome to CrabStack !!!\nBy: António Melo & Ariana Fernandes\n'),
         write('Types of games: \n Player vs Player(0)\n Player vs Computer(1)\n Computer vs Computer(2)\n'),
         read(TypeofGame), %Read Type of game

@@ -1,7 +1,7 @@
 
 % -- Initial Board --%
 board([
-         [[x,x],[empty],[empty],[empty],[x]],
+         [[x],[empty],[empty],[empty],[x]],
          [[x],[empty],[empty],[empty],[empty]],
          [[empty],[empty],[center],[empty],[empty]],
          [[x],[empty],[empty],[empty],[empty]],
@@ -83,7 +83,7 @@ list_butlast_prev([X1|Xs], [X0|Ys], X0) :-
 
 lastElem(0,L).
 lastElem([X],L):-
-        append([X],[],L),
+        append([],X,L),
         lastElem(0,L).
 lastElem([Y|Tail],L):-
         lastElem(Tail,L).
@@ -163,7 +163,10 @@ display_column([C|Ce]):-
 display_element(C) :-
         translate(C,V),
         write(V).
+% Clear Screen %
 
+clearScreen(0).
+clearScreen(N):- nl, N1 is N-1, clearScreen(N1).
 %Prints a TotalChars number of C char
 printChar(CharsDone,TotalChars,C):-
         CharsDone < TotalChars,
