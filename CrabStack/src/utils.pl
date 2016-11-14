@@ -1,7 +1,7 @@
 
 % -- Initial Board --%
 board([
-         [[x],[empty],[empty],[empty],[x]],
+         [[x,x],[empty],[empty],[empty],[x]],
          [[x],[empty],[empty],[empty],[empty]],
          [[empty],[empty],[center],[empty],[empty]],
          [[x],[empty],[empty],[empty],[empty]],
@@ -19,7 +19,7 @@ translate(center, 'O').
 
 translate(s1, '1s').
 translate(m1, '1m').
-translate(l1, '1L').
+translate(l1, '1l').
 translate(s2, '2s').
 translate(m2, '2m').
 translate(l2, '2l').
@@ -66,12 +66,34 @@ emptyCell(Row, Col, [H | T1], [H | T2]):-
         NewRow is Row - 1,
         emptyCell(NewRow, Col, T1, T2).
 
-emptyCellCol(1, [_ | T], [[] | T]).
+emptyCellCol(1, [H1 | T], [H2 | T]):-
+        list_butlast(H1,H2).
 emptyCellCol(Col, [H | T1], [H | T2]):-
         Col > 1, Col < 6,
         NewCol is Col - 1,
         emptyCellCol(NewCol, T1, T2).
 
+%test
+list_butlast([X|Xs], Ys) :-                 % use auxiliary predicate ...
+   list_butlast_prev(Xs, Ys, X).            % ... which lags behind by one item
+
+list_butlast_prev([], [], _).
+list_butlast_prev([X1|Xs], [X0|Ys], X0) :-  
+   list_butlast_prev(Xs, Ys, X1).           % lag behind by one
+
+lastElem(0,L).
+lastElem([X],L):-
+        append([X],[],L),
+        lastElem(0,L).
+lastElem([Y|Tail],L):-
+        lastElem(Tail,L).
+
+%Checks if positions are adjacent
+areAdjacent(X,Y,X1,Y1,Diff):-
+        DiffX is X1-X,
+        DiffY is Y1-Y,
+        (((DiffX >Diff);(DiffY >Diff))->false;true),
+        (((X ==X1),(Y == Y1))->false;true).
 
 % -- Display Board -- %
 display_tab(Board):-

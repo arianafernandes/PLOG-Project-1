@@ -5,6 +5,12 @@
 :- use_module(library(lists)). %lists
 :- use_module(library(random)). %random
 
+:-dynamic lockedPieces/2.
+lockedPieces(1,0).
+lockedPieces(2,0).
+turnToPlay(1).
+gameState(board,lockedPieces,turnToPlay).
+
 %Game Initializer 
 gameInit:-board(T),
         %write('Placing Player1 Pieces\n'),   
@@ -12,6 +18,14 @@ gameInit:-board(T),
         % NewT is T,
         positionPlayerPieces(2,NewBoard,NewBoard2),
         display_tab(NewBoard2).
+        %game_loop(1,NewBoard2).
+
+
+%Game loops
+
+game_loop(1, Board):-  % Play 1 turn
+        write('Player1 turn !\n'),
+        choosePieceToMove(1,Board,NewBoard).
 
 %Place Player Pieces int the board
 positionPlayerPieces(N,T,NewBoard):-
@@ -81,7 +95,43 @@ generateRandomNumber(X,Y):-
 equalPosition(X,Y,Z,X1,Y1,Z1):-
         ((X == X1)->((Y == Y1)->((Z == Z1)->true))).        
         
+%Checks if the player can move certain Piece from (Row, Col) to (RowDest,ColDest) in the Board
+checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
+        getCell(Row,Col,Board,[C]),
+        getCell(RowDest,ColDest,Board,[D]),
+         ((last(C,s1))->( ((areAdjacent(Row,Col,RowDest,ColDest,3))->true;false),
+                          ((last(D,s2))->true;true),
+                          ((last(D,m2))->false;true),
+                          ((last(D,l2))->false;true),
+                          ((last(D,s1))->true;true),
+                          ((last(D,m1))->false;true),
+                          ((last(D,l1))->false;true));true),
+         ((last(C,m1))->( ((areAdjacent(Row,Col,RowDest,ColDest,2))->true;false),
+                          ((last(D,s2))->true;true),
+                          ((last(D,m2))->true;true),
+                          ((last(D,l2))->false;true),
+                          ((last(D,s1))->true;true),
+                          ((last(D,m1))->true;true),
+                          ((last(D,l1))->false;true));true),
+         ((last(C,l1))->( ((areAdjacent(Row,Col,RowDest,ColDest,1))->true;false),
+                          ((last(D,s2))->true;true),
+                          ((last(D,m2))->true;true),
+                          ((last(D,l2))->true;true),
+                          ((last(D,s1))->true;true),
+                          ((last(D,m1))->true;true),
+                          ((last(D,l1))->true;true));true),
+         ((last(C,s2))->false;true),
+         ((last(C,m2))->false;true),
+         ((last(C,l2))->false;true).
 
+movePiece(Row,Col,RowDest,ColDest,Player,Board,NewBoard):-
+        getCell(Row,Col,Board,C),
+        lastElem(C,Las),
+        write(Las),
+        emptyCell(Row,Col,Board,NewBoard1),
+        getCell(RowDest,ColDest,NewBoard1,D),
+        append(D,Las,NewCell),
+        setCell(RowDest,ColDest,NewBoard1,NewCell,NewBoard).
 
 %Temporary funtions
 /*
@@ -92,7 +142,4 @@ printPosition(X,Y):-
         nth0(0, Elem, Elem0),
         translate(Elem0,C),
         write(C).
-
-displayB:- 
-        board(T),
-        display_board(T),*/     
+*/   
