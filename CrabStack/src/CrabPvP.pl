@@ -1,7 +1,5 @@
-%:-dynamic game/4.
-:-include('GameLogic.pl').
 :- use_module(library(system)).
-
+:- use_module(library(random)). %random
 :- now(Timestamp),setrand(Timestamp).
 
 crabPvP:-

@@ -51,82 +51,143 @@ game_lopp(0,Board):- %Bot turn
         display_tab(NewBoard),
         lockedPieces(1, CheckWin),
         write(CheckWin),
-        write('piece(s) locked from Player 1\n'),
-        ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
+        write('piece(s) locked from Player 1\n').
+       % ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
 
 %---------------------------BOT----------------------------------- %
 %------Chooses best Bot play------%
-%Falta adicionar ao X e Y 1 para passar para posições diferente
-%A ultima row afinal é igual ás outras é só avançar 1
-%Caso especial da ultima casa continua
-%Quando são outras casas que não o s2/m2/l2 tem que avançar na mesma
-%definir o quadrado e chamar chooseBestPiecePlay
+%Chamar chooseBestPiecePlay
 %Receber do chooseBestPiecePlay a melhor jogada comparar e guardar no predicado a melhor das duas(no fim vamos ter a melhor)
-chooseBestPlay(2,Board,X,Y):-
-        X> 0, X <5,Y> 0, Y <5,
-        getCell(X,Y,Board,C),
-        last(C,s2),
-        chooseBestPiecePlay.
 
+%---Inside Positions---%
+%Player 2 Pieces
 chooseBestPlay(2,Board,X,Y):-
-        X> 0, X <5,Y> 0, Y <5,
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,s2),
+        Xquad0 is X-3,
+        Yquad0 is Y-3,
+        Xquad1 is X+3,
+        Yquad1 is Y+3,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,m2),
-        chooseBestPiecePlay.
+        Xquad0 is X-2,
+        Yquad0 is Y-2,
+        Xquad1 is X+2,
+        Yquad1 is Y+2,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
 chooseBestPlay(2,Board,X,Y):-
-        X> 0, X <5,Y> 0, Y <5,
+        X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,l2),
-        chooseBestPiecePlay.
-%Last Column 
+        Xquad0 is X-1,
+        Yquad0 is Y-1,
+        Xquad1 is X+1,
+        Yquad1 is Y+1,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+%Player 1 Pieces
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,s1),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,m1),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,l1),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,x),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <6,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,center),
+        Y1 is Y+1,
+        chooseBestPlay(2,Board,X,Y1).
+%---Last Column---%
+%Player 2 Pieces 
 chooseBestPlay(2,Board,X,Y):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,s2),
-        chooseBestPiecePlay.
+        Xquad0 is X-3,
+        Yquad0 is Y-3,
+        Xquad1 is X+3,
+        Yquad1 is Y+3,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
 chooseBestPlay(2,Board,X,Y):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,m2),
-        chooseBestPiecePlay.
+        Xquad0 is X-2,
+        Yquad0 is Y-2,
+        Xquad1 is X+2,
+        Yquad1 is Y+2,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
 chooseBestPlay(2,Board,X,Y):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,l2),
-        chooseBestPiecePlay.
-%Last Row
+        Xquad0 is X-1,
+        Yquad0 is Y-1,
+        Xquad1 is X+1,
+        Yquad1 is Y+1,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
+%Player 1 Pieces 
 chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y> 0, Y <5,
+        X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
-        last(C,s2),
-        chooseBestPiecePlay.
+        last(C,s1),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
 chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y> 0, Y <5,
+        X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
-        last(C,m2),
-        chooseBestPiecePlay.
+        last(C,m1),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
 chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y> 0, Y <5,
+        X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
-        last(C,l2),
-        chooseBestPiecePlay.
+        last(C,l1),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y ==5,
+        getCell(X,Y,Board,C),
+        last(C,x),
+        X1 is X+1,
+        chooseBestPlay(2,Board,X1,1).
 %Last Position
 chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y== 5,
-        getCell(X,Y,Board,C),
-        last(C,s2),
-        chooseBestPiecePlay.
-
-chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y== 5,
-        getCell(X,Y,Board,C),
-        last(C,m2),
-        chooseBestPiecePlay.
-chooseBestPlay(2,Board,X,Y):-
-        X == 5,Y== 5,
-        getCell(X,Y,Board,C),
-        last(C,l2),
-        chooseBestPiecePlay.
+        X == 5,Y== 5.
         
 %------ Chooses best piece move -------%
 %In case the moving board limits are out of the board

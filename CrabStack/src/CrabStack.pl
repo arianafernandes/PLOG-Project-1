@@ -2,6 +2,7 @@
 :-include('CrabPvP.pl'). %PvP mode
 :-include('CrabPvC.pl'). %PvC mode
 :-include('CrabCvC.pl'). %CvC mode
+:-include('GameLogic.pl').
 
 %LIBRARIES
 :- use_module(library(random)). %random
