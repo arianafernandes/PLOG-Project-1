@@ -119,7 +119,27 @@ lockPiece(Player):-
         lockedPieces(Player, CurrentPieces),
         NewPieces is CurrentPieces + 1,
         retract(lockedPieces(Player, _)),
-        assert(lockedPieces(Player, NewPieces)).      
+        assert(lockedPieces(Player, NewPieces)).
+
+%Unclock Piece
+unlockPiece(1):-
+        lockedPieces(1, CurrentPieces),
+        NewPieces is CurrentPieces - 1,
+        retract(lockedPieces(1, _)),
+        assert(lockedPieces(1, NewPieces)).
+unlockPiece(2):-
+        lockedPieces(2, CurrentPieces),
+        NewPieces is CurrentPieces - 1,
+        retract(lockedPieces(2, _)),
+        assert(lockedPieces(2, NewPieces)).
+unlockPiece(C):-
+        ((last(C,s1))->unlockPiece(1));true,
+        ((last(C,m1))->unlockPiece(1));true,
+        ((last(C,l1))->unlockPiece(1));true,
+        ((last(C,s2))->unlockPiece(2));true,
+        ((last(C,m2))->unlockPiece(2));true,
+        ((last(C,l2))->unlockPiece(2));true.
+      
 %Checks if the player can move certain Piece from (Row, Col) to (RowDest,ColDest) in the Board
 checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
         getCell(Row,Col,Board,C),
@@ -203,6 +223,10 @@ movePiece(Row,Col,RowDest,ColDest,Board,NewBoard):-
         lastElem(C,Las),
         % write(Las),
         emptyCell(Row,Col,Board,NewBoard1),
+        
+        getCell(Row,Col,NewBoard1,C2),
+        write(C2),nl,
+        unlockPiece(C2),
         %getCell(RowDest,ColDest,NewBoard1,D),
         %append(D,Las,NewCell),
         setCell(RowDest,ColDest,NewBoard1,[Las],NewBoard).
