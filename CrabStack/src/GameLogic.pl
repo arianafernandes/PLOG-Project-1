@@ -44,7 +44,136 @@ game_loop(2, Board):-  % Play 2 turn
         lockedPieces(1, CheckWin),
         write(CheckWin),
         write('piece(s) locked from Player 1\n'),
-        ((CheckWin == 9)->write('Player1 wins');game_loop(1,NewBoard)).
+        ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
+game_lopp(0,Board):- %Bot turn
+        write('Bot turn !\n'),
+        %FUNÇÂO QUE ESCOLHE A MELHOR JOGADA
+        display_tab(NewBoard),
+        lockedPieces(1, CheckWin),
+        write(CheckWin),
+        write('piece(s) locked from Player 1\n'),
+        ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
+
+%---------------------------BOT----------------------------------- %
+%------Chooses best Bot play------%
+%Falta adicionar ao X e Y 1 para passar para posições diferente
+%A ultima row afinal é igual ás outras é só avançar 1
+%Caso especial da ultima casa continua
+%Quando são outras casas que não o s2/m2/l2 tem que avançar na mesma
+%definir o quadrado e chamar chooseBestPiecePlay
+%Receber do chooseBestPiecePlay a melhor jogada comparar e guardar no predicado a melhor das duas(no fim vamos ter a melhor)
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,s2),
+        chooseBestPiecePlay.
+
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,m2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,l2),
+        chooseBestPiecePlay.
+%Last Column 
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y ==5,
+        getCell(X,Y,Board,C),
+        last(C,s2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y ==5,
+        getCell(X,Y,Board,C),
+        last(C,m2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X> 0, X <5,Y ==5,
+        getCell(X,Y,Board,C),
+        last(C,l2),
+        chooseBestPiecePlay.
+%Last Row
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,s2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,m2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y> 0, Y <5,
+        getCell(X,Y,Board,C),
+        last(C,l2),
+        chooseBestPiecePlay.
+%Last Position
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y== 5,
+        getCell(X,Y,Board,C),
+        last(C,s2),
+        chooseBestPiecePlay.
+
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y== 5,
+        getCell(X,Y,Board,C),
+        last(C,m2),
+        chooseBestPiecePlay.
+chooseBestPlay(2,Board,X,Y):-
+        X == 5,Y== 5,
+        getCell(X,Y,Board,C),
+        last(C,l2),
+        chooseBestPiecePlay.
+        
+%------ Chooses best piece move -------%
+%In case the moving board limits are out of the board
+%Falta verificar que está dentro do quadrado
+%Falta chamar a função outra vez para avançar no quadrado
+%Ter como argumento uma Valor que vai ser o valor máximo de peças locked possível com o movimento de uma determinada peça
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
+        X1 <1,chooseBestPiecePlay(X,Y,1,Y1,X2,Y2,1,Y3,X4,Y4,Board).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
+        Y1 <1,chooseBestPiecePlay(X,Y,X1,1,X2,Y2,X3,1,X4,Y4,Board).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
+        X2 >5,chooseBestPiecePlay(X,Y,X1,Y1,5,Y2,X3,Y3,5,Y4,Board).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
+        Y2 >5,chooseBestPiecePlay(X,Y,X1,Y1,X2,5,X3,Y3,X4,5,Board).  
+
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
+        checkIsValidMove(X, Y,X1,Y2, 2, Board),
+        calPlayerPiecesPosition(X1,Y2,Board,-1,ReturnValue).
+
+%-------Calculates Number of Player Pieces in Position ---%
+calPlayerPiecesPosition(X,Y,Board,-1,ReturnValue):-
+        calValue(s1,X,Y,Board,0,Value),
+        Value2 is Value,
+        calValue(m1,X,Y,Board,0,Value2),
+        Value3 is Value2,
+        calValue(l1,X,Y,Board,0,Value3),
+        ReturnValue is Value3,
+        calPlayerPiecesPosition(X,Y,Board,0,ReturnValue).
+calPlayerPiecesPosition(X,Y,Board,0,ReturnValue).
+
+calValue(s1,X,Y,Board,1,Value).
+calValue(s1,X,Y,Board,0,Value):-
+        getCell(X,Y,X,C),
+        count(s1,C,V),
+        calValue(s1,X,Y,Board,1,V).
+calValue(m1,X,Y,Board,1,Value).
+calValue(m1,X,Y,Board,0,Value):-
+        getCell(X,Y,X,C),
+        count(m1,C,V),
+        calValue(m1,X,Y,Board,1,V).
+calValue(l1,X,Y,Board,1,Value).
+calValue(l1,X,Y,Board,0,Value):-
+        getCell(X,Y,X,C),
+        count(l1,C,V),
+        calValue(l1,X,Y,Board,1,V).
+%-----------------------------BOT----------------------------------- %
+
 
 %Place Player Pieces int the board
 positionPlayerPieces(N,T,NewBoard):-
@@ -230,14 +359,3 @@ movePiece(Row,Col,RowDest,ColDest,Board,NewBoard):-
         %getCell(RowDest,ColDest,NewBoard1,D),
         %append(D,Las,NewCell),
         setCell(RowDest,ColDest,NewBoard1,[Las],NewBoard).
-
-%Temporary funtions
-/*
-printPosition(X,Y):-
-        board(T),
-        nth0(X, T, Row),
-        nth0(Y, Row, Elem),
-        nth0(0, Elem, Elem0),
-        translate(Elem0,C),
-        write(C).
-*/   

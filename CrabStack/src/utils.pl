@@ -88,6 +88,17 @@ lastElem([X],L):-
 lastElem([Y|Tail],L):-
         lastElem(Tail,L).
 
+% Counts number of elements X in a certain list
+count(_, [], 0) :- !. /* empty list, base case */
+
+count(X, [X|T], N) :- /* if X is in the head of the list */
+    count(X, T, N2), /* count on the tail (let this N2) */
+    N is N2 + 1.     /* and N is N2 + 1  */
+
+count(X, [Y|T], N) :- 
+    X \= Y,          /* if X is not in the head */
+    count(X, T, N).  /* just count the rest */
+
 %Checks if positions are adjacent
 areAdjacent(X,Y,X1,Y1,Diff):-
         DiffX is X1-X,
