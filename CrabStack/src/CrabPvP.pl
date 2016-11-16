@@ -3,7 +3,7 @@
 :- now(Timestamp),setrand(Timestamp).
 
 crabPvP:-
-        gameInit.
+        gameInit(0).
 
 choosePieceToMove(Player, Board, NewBoard):-
     write('\nPlease introduce the row and collumn of the piece you want to move:'),

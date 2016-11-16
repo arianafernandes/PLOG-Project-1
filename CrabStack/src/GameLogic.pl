@@ -12,7 +12,7 @@ lockedPieces(2,0).
 gameState(board,lockedPieces,turnToPlay).
 
 %Game Initializer 
-gameInit:-
+gameInit(0):-
         retract(lockedPieces(1, _)),
         assert(lockedPieces(1, 0)),
         retract(lockedPieces(2, _)),
@@ -25,6 +25,19 @@ gameInit:-
         write('Displaying Initial Board\n'),
         display_tab(NewBoard2),
         game_loop(1,NewBoard2).
+gameInit(1):-
+        retract(lockedPieces(1, _)),
+        assert(lockedPieces(1, 0)),
+        retract(lockedPieces(2, _)),
+        assert(lockedPieces(2, 0)),
+        board(T),
+        write('Placing Player1 Pieces\n'),   
+        positionPlayerPieces(1,T,NewBoard),
+        write('Placing Bot Pieces\n'), 
+        positionPlayerPieces(2,NewBoard,NewBoard2),
+        write('Displaying Initial Board\n'),
+        display_tab(NewBoard2),
+        game_loop(0,NewBoard2).
 
 
 %Game loops
@@ -45,14 +58,15 @@ game_loop(2, Board):-  % Play 2 turn
         write(CheckWin),
         write('piece(s) locked from Player 1\n'),
         ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
-game_lopp(0,Board):- %Bot turn
+game_loop(0,Board):- %Bot turn
         write('Bot turn !\n'),
-        %FUNÇÂO QUE ESCOLHE A MELHOR JOGADA
+        chooseBestPlay(2,Board,1,1,0,Xmove,Ymove,Xsource,Ysource),
+        movePiece(Xsource,Ysource,Xmove,Ymove,Board,NewBoard),
         display_tab(NewBoard),
         lockedPieces(1, CheckWin),
         write(CheckWin),
-        write('piece(s) locked from Player 1\n').
-       % ((CheckWin == 9)->write('Player2 wins');game_loop(1,NewBoard)).
+        write('piece(s) locked from Player 1\n'),
+       ((CheckWin == 9)->write('Player1 wins');game_loop(1,NewBoard)).
 
 %---------------------------BOT----------------------------------- %
 %------Chooses best Bot play------%
@@ -61,7 +75,7 @@ game_lopp(0,Board):- %Bot turn
 
 %---Inside Positions---%
 %Player 2 Pieces
-chooseBestPlay(2,Board,X,Y):-
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,s2),
@@ -69,10 +83,11 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-3,
         Xquad1 is X+3,
         Yquad1 is Y+3,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X,Y1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,m2),
@@ -80,10 +95,11 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-2,
         Xquad1 is X+2,
         Yquad1 is Y+2,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X,Y1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,l2),
@@ -91,43 +107,44 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-1,
         Xquad1 is X+1,
         Yquad1 is Y+1,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X,Y1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
 %Player 1 Pieces
-chooseBestPlay(2,Board,X,Y):-
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,s1),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,m1),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,l1),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,x),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <6,Y> 0, Y <5,
         getCell(X,Y,Board,C),
         last(C,center),
         Y1 is Y+1,
-        chooseBestPlay(2,Board,X,Y1).
+        chooseBestPlay(2,Board,X,Y1,BestPlay,Xmove,Ymove,Xsource,Ysource).
 %---Last Column---%
 %Player 2 Pieces 
-chooseBestPlay(2,Board,X,Y):-
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,s2),
@@ -135,10 +152,11 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-3,
         Xquad1 is X+3,
         Yquad1 is Y+3,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
-chooseBestPlay(2,Board,X,Y):-
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X1,1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,m2),
@@ -146,10 +164,11 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-2,
         Xquad1 is X+2,
         Yquad1 is Y+2,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
-chooseBestPlay(2,Board,X,Y):-
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X1,1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,l2),
@@ -157,82 +176,191 @@ chooseBestPlay(2,Board,X,Y):-
         Yquad0 is Y-1,
         Xquad1 is X+1,
         Yquad1 is Y+1,
-        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board),
+        BestPlayP is 0,
+        chooseBestPiecePlay(X,Y,Xquad0,Yquad0,Xquad1,Yquad1,Xquad0,Yquad0,Xquad1,Yquad1,Board,BestPlayP,0,XmoveP,YmoveP),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
+        ((BestPlayP > BestPlay)->chooseBestPlay(2,Board,X1,1,BestPlayP,XmoveP,YmoveP,X,Y);chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource)).
 %Player 1 Pieces 
-chooseBestPlay(2,Board,X,Y):-
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,s1),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,m1),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,l1),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
-chooseBestPlay(2,Board,X,Y):-
+        chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource).
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X> 0, X <5,Y ==5,
         getCell(X,Y,Board,C),
         last(C,x),
         X1 is X+1,
-        chooseBestPlay(2,Board,X1,1).
+        chooseBestPlay(2,Board,X1,1,BestPlay,Xmove,Ymove,Xsource,Ysource).
 %Last Position
-chooseBestPlay(2,Board,X,Y):-
+chooseBestPlay(2,Board,X,Y,BestPlay,Xmove,Ymove,Xsource,Ysource):-
         X == 5,Y== 5.
         
 %------ Chooses best piece move -------%
-%In case the moving board limits are out of the board
-%Falta verificar que está dentro do quadrado
-%Falta chamar a função outra vez para avançar no quadrado
-%Ter como argumento uma Valor que vai ser o valor máximo de peças locked possível com o movimento de uma determinada peça
-chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
-        X1 <1,chooseBestPiecePlay(X,Y,1,Y1,X2,Y2,1,Y3,X4,Y4,Board).
-chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
-        Y1 <1,chooseBestPiecePlay(X,Y,X1,1,X2,Y2,X3,1,X4,Y4,Board).
-chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
-        X2 >5,chooseBestPiecePlay(X,Y,X1,Y1,5,Y2,X3,Y3,5,Y4,Board).
-chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
-        Y2 >5,chooseBestPiecePlay(X,Y,X1,Y1,X2,5,X3,Y3,X4,5,Board).  
+%Top Point conditions
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 <1,Y1>1,chooseBestPiecePlay(X,Y,1,Y1,X2,Y2,1,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >1,Y1 <1,chooseBestPiecePlay(X,Y,X1,1,X2,Y2,X3,1,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 <1,Y1<1,chooseBestPiecePlay(X,Y,1,1,X2,Y2,1,1,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+%Bot point conditions
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X2 >5,Y2 <6 ,chooseBestPiecePlay(X,Y,X1,Y1,5,Y2,X3,Y3,5,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X2 < 6,Y2 >5,chooseBestPiecePlay(X,Y,X1,Y1,X2,5,X3,Y3,X4,5,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X2 >5,Y2>5,chooseBestPiecePlay(X,Y,X1,Y1,5,5,X3,Y3,5,5,Board,BestPlay,Stop,Xmove,Ymove).
+%When coords are right
+%Normal move right
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 \= Y4,
+        write('1\n'),
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move \n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        Ycoord1 is Y1+1,
+        BestPlay2 > BestPlay,
+        chooseBestPiecePlay(X,Y,X1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay2,Stop,X1,Y1).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 \= Y4,
+        write('2\n'),
+        \+checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('invalid move\n'),
+        Ycoord1 is Y1+1,
+        chooseBestPiecePlay(X,Y,X1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 \= Y4,
+        write('3\n'),
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move\n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        Ycoord1 is Y1+1,
+        BestPlay2 < BestPlay,
+        chooseBestPiecePlay(X,Y,X1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
 
-chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board):-
-        checkIsValidMove(X, Y,X1,Y2, 2, Board),
-        calPlayerPiecesPosition(X1,Y2,Board,-1,ReturnValue).
+%Last Row go down
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 == Y4,
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move\n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        Xcoord1 is X1+1,
+        Ycoord1 is X3,
+        BestPlay2 > BestPlay,
+        chooseBestPiecePlay(X,Y,Xcoord1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay2,Stop,X1,Y1).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 == Y4,
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move\n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        Xcoord1 is X1+1,
+        Ycoord1 is X3,
+        BestPlay2 < BestPlay,
+        chooseBestPiecePlay(X,Y,Xcoord1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        Y1 == Y4,
+        \+ checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('invalid move\n'),
+        Xcoord1 is X1+1,
+        Ycoord1 is X3,
+        chooseBestPiecePlay(X,Y,Xcoord1,Ycoord1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove).
+%Last position
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        X1 == X4,
+        Y1 == Y4,
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move\n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        BestPlay2 > BestPlay,
+        chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay2,1,X1,X2).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        X1 == X4,
+        Y1 == Y4,
+        checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('valid move\n'),
+        calPlayerPiecesPosition(X1,Y1,Board,-1,BestPlay2),
+        write(BestPlay2),
+        BestPlay2 < BestPlay,
+        chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,1,Xmove,Ymove).
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,Stop,Xmove,Ymove):-
+        X1 >0,X1 <6,X2>0,X2<6,Y1>0,Y1<6,Y2>0,Y2<6,
+        X1 == X4,
+        Y1 == Y4,
+        \+ checkIsValidMove(X, Y,X1,Y1, 2, Board),
+        write('invalid move\n'),
+        chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,1,Xmove,Ymove).
 
+chooseBestPiecePlay(X,Y,X1,Y1,X2,Y2,X3,Y3,X4,Y4,Board,BestPlay,1,Xmove,Ymove).
 %-------Calculates Number of Player Pieces in Position ---%
 calPlayerPiecesPosition(X,Y,Board,-1,ReturnValue):-
+        getCell(X,Y,Board,C),
+        \+ (last(C,s2);last(C,m2);last(C,l2)),
+        write('Vou calcular o valor visto q n tem 2\n'),
         calValue(s1,X,Y,Board,0,Value),
-        Value2 is Value,
+        write(Value),
         calValue(m1,X,Y,Board,0,Value2),
-        Value3 is Value2,
+        write(Value2),
         calValue(l1,X,Y,Board,0,Value3),
-        ReturnValue is Value3,
+        write(Value3),
+        Value4 is Value+Value2,
+        ReturnValue is Value4+Value3,
+        write(ReturnValue),
+        calPlayerPiecesPosition(X,Y,Board,0,ReturnValue).
+calPlayerPiecesPosition(X,Y,Board,-1,ReturnValue):-
+        getCell(X,Y,Board,C),
+        (last(C,s2);last(C,m2);last(C,l2)),
+        ReturnValue = 0,
         calPlayerPiecesPosition(X,Y,Board,0,ReturnValue).
 calPlayerPiecesPosition(X,Y,Board,0,ReturnValue).
 
 calValue(s1,X,Y,Board,1,Value).
 calValue(s1,X,Y,Board,0,Value):-
-        getCell(X,Y,X,C),
+        getCell(X,Y,Board,C),
         count(s1,C,V),
-        calValue(s1,X,Y,Board,1,V).
+        Value = V,
+        write(Value),
+        calValue(s1,X,Y,Board,1,Value).
 calValue(m1,X,Y,Board,1,Value).
 calValue(m1,X,Y,Board,0,Value):-
-        getCell(X,Y,X,C),
+        getCell(X,Y,Board,C),
         count(m1,C,V),
-        calValue(m1,X,Y,Board,1,V).
+        Value = V,
+        write(Value),
+        calValue(m1,X,Y,Board,1,Value).
 calValue(l1,X,Y,Board,1,Value).
 calValue(l1,X,Y,Board,0,Value):-
-        getCell(X,Y,X,C),
+        getCell(X,Y,Board,C),
         count(l1,C,V),
-        calValue(l1,X,Y,Board,1,V).
+        Value = V,
+        write(Value),
+        calValue(l1,X,Y,Board,1,Value).
 %-----------------------------BOT----------------------------------- %
 
 
@@ -334,10 +462,8 @@ unlockPiece(C):-
 checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
         getCell(Row,Col,Board,C),
         write(C),nl,
-        write([C]),nl,
         getCell(RowDest,ColDest,Board,D),
         write(D),nl,
-        write([D]),nl,
         
          ((last(D,x))->fail;true),
          ((last(D,center))->fail;true),
@@ -373,10 +499,8 @@ checkIsValidMove(Row, Col,RowDest,ColDest, 1, Board):-
 checkIsValidMove(Row, Col,RowDest,ColDest, 2, Board):-
         getCell(Row,Col,Board,C),
         write(C),nl,
-        write([C]),nl,
         getCell(RowDest,ColDest,Board,D),
         write(D),nl,
-        write([D]),nl,
         
         ((last(D,center))->fail;true),
          ((last(C,x))->fail;true),

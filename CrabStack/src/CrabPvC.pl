@@ -3,4 +3,4 @@
 :- now(Timestamp),setrand(Timestamp).
 
 crabPvC:-
-        gameInit.
+        gameInit(1).
